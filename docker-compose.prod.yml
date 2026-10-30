@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: atomicstock_postgres_prod
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_DB: inventory_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d inventory_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: atomicstock_redis_prod
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_prod_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: atomicstock_backend_prod
+    restart: always
+    environment:
+      DATABASE_URL: "postgresql://admin:adminpassword@postgres:5432/inventory_db?schema=public"
+      REDIS_URL: "redis://redis:6379"
+      JWT_SECRET: "tier1-secret-jwt-key-production"
+      SUPER_ADMIN_EMAIL: "admin@tier1.com"
+      PORT: 3000
+      CLIENT_URL: "http://localhost"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: atomicstock_frontend_prod
+    restart: always
+    ports:
+      - "80:80"
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_prod_data:
+  redis_prod_data:
+
