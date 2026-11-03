@@ -12,9 +12,18 @@ import { dispatchSchema, productSchema, warehouseSchema } from './utils/validato
 
 const app = express();
 const httpServer = createServer(app);
+
+// Allow CORS from any origin for production and academic evaluation
+const corsOptions = {
+  origin: true, // Echoes the request origin, allowing all browsers, mobile devices, and Render domains
+  credentials: true,
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
+
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: '*',
     methods: ['GET', 'POST', 'PATCH', 'DELETE']
   }
 });
@@ -24,7 +33,8 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const JWT_SECRET = process.env.JWT_SECRET || 'tier1-secret-jwt-key';
 const SUPER_ADMIN_EMAIL = process.env.SUPER_ADMIN_EMAIL || 'admin@tier1.com';
 
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 
 export interface AuthenticatedUserPayload {

@@ -125,16 +125,24 @@ function ProtectedLayout() {
 }
 
 export default function App() {
-  return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <AuthProvider>
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/*"     element={<ProtectedLayout />} />
-          </Routes>
-        </Router>
-      </AuthProvider>
-    </GoogleOAuthProvider>
+  const content = (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/*"     element={<ProtectedLayout />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
+
+  if (GOOGLE_CLIENT_ID) {
+    return (
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        {content}
+      </GoogleOAuthProvider>
+    );
+  }
+
+  return content;
 }

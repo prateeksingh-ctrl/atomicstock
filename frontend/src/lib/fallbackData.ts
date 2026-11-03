@@ -124,3 +124,4 @@ export const FALLBACK_TRANSACTIONS = [
   { id: 'tx-3', type: 'OUTBOUND', sku: 'LOGI-MXM3S-GRY', quantity: 5, sellingPrice: 129.99, status: 'COMPLETED', createdAt: new Date(Date.now() - 1000 * 60 * 60).toISOString() },
   { id: 'tx-4', type: 'OUTBOUND', sku: 'APPL-IP15P-256', quantity: 1, sellingPrice: 1399.00, status: 'COMPLETED', createdAt: new Date(Date.now() - 1000 * 60 * 120).toISOString() }
 ];
+

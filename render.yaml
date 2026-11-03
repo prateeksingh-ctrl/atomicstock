@@ -24,6 +24,8 @@ services:
         value: admin@tier1.com
       - key: PORT
         value: 3000
+      - key: CLIENT_URL
+        value: https://atomicstock-frontend.onrender.com
 
   # 2. Vite React Frontend (Static Site)
   - type: web
@@ -38,7 +40,4 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_URL
-        fromService:
-          type: web
-          name: atomicstock-backend
-          property: host
+        value: https://atomicstock-backend.onrender.com
