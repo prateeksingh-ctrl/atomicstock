@@ -34,7 +34,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'tier1-secret-jwt-key';
 const SUPER_ADMIN_EMAIL = process.env.SUPER_ADMIN_EMAIL || 'admin@tier1.com';
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
 app.use(express.json());
 
 export interface AuthenticatedUserPayload {
@@ -1127,15 +1126,12 @@ app.post('/api/v1/inventory/dispatch',
 
 const PORT = process.env.PORT || 3000;
 
-ensureRolesBootstrapped()
-  .then(() => {
-    httpServer.listen(PORT, () => {
-      console.log(`\n🚀 AtomicStock Tier-1 Core Live on port ${PORT}`);
-      console.log(`🔒 RBAC Super Admin: ${SUPER_ADMIN_EMAIL}`);
-      console.log(`⚡ Redis Cache & Socket.io Engine Online`);
-    });
-  })
-  .catch((err) => {
-    console.error('❌ Role bootstrapping failure. Aborting startup sequence.', err);
-    process.exit(1);
+httpServer.listen(PORT, () => {
+  console.log(`\n🚀 AtomicStock Tier-1 Core Live on port ${PORT}`);
+  console.log(`🔒 RBAC Super Admin: ${SUPER_ADMIN_EMAIL}`);
+  console.log(`⚡ In-memory Cache & Socket.io Engine Online`);
+
+  ensureRolesBootstrapped().catch((err) => {
+    console.warn('⚠️ Non-fatal role bootstrap delay (will sync upon query):', err.message);
   });
+});
