@@ -8,7 +8,7 @@ services:
   # 1. Express Backend Web Service
   - type: web
     name: atomicstock-backend
-    env: node
+    runtime: node
     plan: free
     rootDir: backend
     buildCommand: npm install && npx prisma generate && npx prisma migrate deploy && npx prisma db seed
@@ -28,8 +28,7 @@ services:
   # 2. Vite React Frontend (Static Site)
   - type: web
     name: atomicstock-frontend
-    env: static
-    plan: free
+    runtime: static
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
