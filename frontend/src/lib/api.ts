@@ -11,8 +11,10 @@ if (rawBase && !rawBase.startsWith('http://') && !rawBase.startsWith('https://')
   }
 }
 
-// Default to origin or localhost:3000
-const BASE_URL = rawBase || (typeof window !== 'undefined' && window.location.origin.includes('localhost') ? 'http://localhost:3000' : '');
+// Default to live Render backend if not on localhost
+const BASE_URL = rawBase || (typeof window !== 'undefined' && (window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1'))
+  ? 'http://localhost:3000'
+  : 'https://atomicstock-backend.onrender.com');
 
 function getAuthHeaders(): HeadersInit {
   const token = typeof window !== 'undefined' ? localStorage.getItem('tier1_token') : null;
