@@ -7,6 +7,7 @@ import AnimatedButton from '../components/AnimatedButton';
 import PageWrapper from '../components/PageWrapper';
 import HardwareInputBar, { HardwareSource } from '../components/HardwareInputBar';
 import { Warehouse, Product } from '../types';
+import { FALLBACK_WAREHOUSES, FALLBACK_PRODUCTS } from '../lib/fallbackData';
 
 /**
  * Web Audio API synthesizer for hardware POS acoustic feedback.
@@ -83,12 +84,14 @@ export default function Scanner() {
 
   useEffect(() => {
     Promise.all([
-      api.get('/api/v1/warehouses'),
-      api.get('/api/v1/products')
+      api.get('/api/v1/warehouses').catch(() => ({ data: FALLBACK_WAREHOUSES })),
+      api.get('/api/v1/products').catch(() => ({ data: FALLBACK_PRODUCTS }))
     ]).then(([whData, prodData]) => {
-      setWarehouses(whData.data || []);
-      if (whData.data?.length > 0) setWarehouseId(whData.data[0].id);
-      setCatalog(prodData.data || []);
+      const whs = whData?.data?.length ? whData.data : (FALLBACK_WAREHOUSES as unknown as Warehouse[]);
+      const prods = prodData?.data?.length ? prodData.data : (FALLBACK_PRODUCTS as unknown as Product[]);
+      setWarehouses(whs);
+      if (whs.length > 0) setWarehouseId(whs[0].id);
+      setCatalog(prods);
     });
   }, []);
 

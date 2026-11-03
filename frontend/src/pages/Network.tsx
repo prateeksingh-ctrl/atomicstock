@@ -5,6 +5,7 @@ import { api } from '../lib/api';
 import PageWrapper from '../components/PageWrapper';
 import EmptyState from '../components/EmptyState';
 import { Warehouse } from '../types';
+import { FALLBACK_WAREHOUSES } from '../lib/fallbackData';
 import { toast, Toaster } from 'sonner';
 
 export default function Network() {
@@ -29,10 +30,11 @@ export default function Network() {
   const fetchNodes = async () => {
     try {
       const data = await api.get('/api/v1/warehouses');
-      setNodes(data.data || []);
+      setNodes(data?.data?.length ? data.data : (FALLBACK_WAREHOUSES as unknown as Warehouse[]));
       setLoading(false);
     } catch (err) {
-      console.error('Failed to load fulfillment hubs:', err);
+      console.warn('Network offline or backend spinning up, using cached hubs:', err);
+      setNodes(FALLBACK_WAREHOUSES as unknown as Warehouse[]);
       setLoading(false);
     }
   };

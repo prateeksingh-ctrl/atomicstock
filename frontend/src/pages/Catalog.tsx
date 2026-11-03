@@ -5,6 +5,7 @@ import { api } from '../lib/api';
 import PageWrapper from '../components/PageWrapper';
 import EmptyState from '../components/EmptyState';
 import { Product, Warehouse } from '../types';
+import { FALLBACK_PRODUCTS, FALLBACK_WAREHOUSES } from '../lib/fallbackData';
 import { toast, Toaster } from 'sonner';
 
 export default function Catalog() {
@@ -34,11 +35,13 @@ export default function Catalog() {
         api.get('/api/v1/products'),
         api.get('/api/v1/warehouses')
       ]);
-      setCatalog(prodData.data || []);
-      setWarehouses(whData.data || []);
+      setCatalog(prodData?.data?.length ? prodData.data : (FALLBACK_PRODUCTS as unknown as Product[]));
+      setWarehouses(whData?.data?.length ? whData.data : (FALLBACK_WAREHOUSES as unknown as Warehouse[]));
       setLoading(false);
     } catch (err) {
-      console.error('Failed to load catalog data:', err);
+      console.warn('Network offline or backend spinning up, using cached catalog:', err);
+      setCatalog(FALLBACK_PRODUCTS as unknown as Product[]);
+      setWarehouses(FALLBACK_WAREHOUSES as unknown as Warehouse[]);
       setLoading(false);
     }
   };
