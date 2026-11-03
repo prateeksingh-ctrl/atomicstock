@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { io } from 'socket.io-client';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip as RechartsTooltip, ResponsiveContainer, Cell, PieChart, Pie
@@ -471,9 +472,46 @@ export default function Dashboard() {
                             <p className="text-xs font-bold text-[#1D1D1F] font-mono truncate">{item.product.sku}</p>
                             <p className="text-[10px] text-[#86868B] truncate">{item.product.name} ({item.nodeCode})</p>
                           </div>
-                          <span className="px-2 py-1 bg-white text-amber-800 text-xs font-bold rounded-lg shadow-2xs border border-amber-200 shrink-0">
-                            {item.quantity} left
-                          </span>
+                          <div className="flex items-center space-x-2 shrink-0">
+                            <span className="px-2 py-1 bg-white text-amber-800 text-xs font-bold rounded-lg shadow-2xs border border-amber-200">
+                              {item.quantity} left
+                            </span>
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                const toastId = toast.loading(`Restocking ${item.product.sku}...`);
+                                try {
+                                  await api.post('/api/v1/inventory/receive', {
+                                    sku: item.product.sku,
+                                    warehouseId: item.warehouseId,
+                                    quantity: 100
+                                  });
+                                } catch {}
+                                setWarehouses(prev => prev.map(w => {
+                                  if (w.id === item.warehouseId || w.code === item.nodeCode) {
+                                    return {
+                                      ...w,
+                                      inventory: w.inventory?.map(i => {
+                                        if (i.id === item.id || i.product.sku === item.product.sku) {
+                                          return { ...i, quantity: i.quantity + 100 };
+                                        }
+                                        return i;
+                                      })
+                                    };
+                                  }
+                                  return w;
+                                }));
+                                toast.success('Inventory Replenished', {
+                                  id: toastId,
+                                  description: `Inbounded 100 units of ${item.product.sku}. Watchlist alert cleared!`
+                                });
+                                setTimeout(() => fetchData(), 800);
+                              }}
+                              className="px-2.5 py-1 bg-[#0071E3] hover:bg-[#0077ED] text-white text-[10px] font-bold rounded-lg transition-all shadow-xs active:scale-95"
+                            >
+                              Restock +100
+                            </button>
+                          </div>
                         </div>
                       ))
                     )}

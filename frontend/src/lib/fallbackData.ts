@@ -125,3 +125,54 @@ export const FALLBACK_TRANSACTIONS = [
   { id: 'tx-4', type: 'OUTBOUND', sku: 'APPL-IP15P-256', quantity: 1, sellingPrice: 1399.00, status: 'COMPLETED', createdAt: new Date(Date.now() - 1000 * 60 * 120).toISOString() }
 ];
 
+export const FALLBACK_ROLES = [
+  { id: 'role-1', name: 'GLOBAL_ADMIN', permissions: ['GLOBAL_ADMIN'] },
+  { id: 'role-2', name: 'NODE_MANAGER', permissions: ['NODE_MANAGER'] },
+  { id: 'role-3', name: 'OUTBOUND_SPECIALIST', permissions: ['OUTBOUND_SPECIALIST'] },
+  { id: 'role-4', name: 'INBOUND_SPECIALIST', permissions: ['INBOUND_SPECIALIST'] },
+  { id: 'role-5', name: 'INVENTORY_AUDITOR', permissions: ['INVENTORY_AUDITOR'] }
+];
+
+export const FALLBACK_USERS = [
+  {
+    id: 'usr-1',
+    name: 'Dr. Alok Verma',
+    email: 'admin@tier1.com',
+    status: 'ACTIVE',
+    role: { id: 'role-1', name: 'GLOBAL_ADMIN' },
+    warehouse: null
+  },
+  {
+    id: 'usr-2',
+    name: 'Priya Sharma',
+    email: 'manager.delhi@tier1.com',
+    status: 'ACTIVE',
+    role: { id: 'role-2', name: 'NODE_MANAGER' },
+    warehouse: { id: 'wh-del-01', code: 'DEL-01', name: 'Delhi NCR Central Fulfilment Hub' }
+  },
+  {
+    id: 'usr-3',
+    name: 'Vikram Malhotra',
+    email: 'manager.mumbai@tier1.com',
+    status: 'ACTIVE',
+    role: { id: 'role-2', name: 'NODE_MANAGER' },
+    warehouse: { id: 'wh-mum-01', code: 'MUM-01', name: 'Mumbai Western Maritime Logistics Hub' }
+  },
+  {
+    id: 'usr-4',
+    name: 'Rajesh Kumar',
+    email: 'operator.delhi@tier1.com',
+    status: 'ACTIVE',
+    role: { id: 'role-3', name: 'OUTBOUND_SPECIALIST' },
+    warehouse: { id: 'wh-del-01', code: 'DEL-01', name: 'Delhi NCR Central Fulfilment Hub' }
+  },
+  {
+    id: 'usr-5',
+    name: 'Sunita Rao',
+    email: 'auditor@tier1.com',
+    status: 'ACTIVE',
+    role: { id: 'role-5', name: 'INVENTORY_AUDITOR' },
+    warehouse: null
+  }
+];
+

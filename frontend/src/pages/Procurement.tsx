@@ -56,6 +56,13 @@ export default function Procurement() {
   }, []);
 
   useEffect(() => {
+    if (!supplierId && suppliers.length > 0) {
+      const match = suppliers.find(s => s.warehouseId === warehouseId) || suppliers[0];
+      setSupplierId(match.id);
+    }
+  }, [suppliers, supplierId, warehouseId]);
+
+  useEffect(() => {
     if (sku.length >= 2) {
       const found = catalog.find(p => p.sku.toUpperCase() === sku.toUpperCase());
       setScannedProduct(found || null);
@@ -224,9 +231,13 @@ export default function Procurement() {
                   className="w-full px-4 py-3 rounded-xl border border-[#E5E5EA] bg-white outline-none text-sm font-medium focus:border-[#0071E3]"
                 >
                   <option value="" disabled>Select authorized vendor...</option>
-                  {suppliers.filter(s => s.warehouseId === warehouseId).map(sup => (
-                    <option key={sup.id} value={sup.id}>{sup.name} ({sup.code})</option>
-                  ))}
+                  {(() => {
+                    const matching = suppliers.filter(s => !s.warehouseId || !warehouseId || s.warehouseId === warehouseId);
+                    const listToRender = matching.length > 0 ? matching : suppliers;
+                    return listToRender.map(sup => (
+                      <option key={sup.id} value={sup.id}>{sup.name} ({sup.code})</option>
+                    ));
+                  })()}
                 </select>
               </div>
               <button
